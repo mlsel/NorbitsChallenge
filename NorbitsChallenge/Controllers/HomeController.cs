@@ -14,10 +14,12 @@ namespace NorbitsChallenge.Controllers
     public class HomeController : Controller
     {
         private readonly IConfiguration _config;
+        private readonly CarDb _carDb;
 
         public HomeController(IConfiguration config)
         {
             _config = config;
+            _carDb = new CarDb(config);
         }
 
         public IActionResult Index()
@@ -29,12 +31,16 @@ namespace NorbitsChallenge.Controllers
         [HttpPost]
         public JsonResult Index(int companyId, string licensePlate)
         {
-            var tireCount = new CarDb(_config).GetTireCount(companyId, licensePlate);
+            var car = _carDb.GetCarDetails(companyId, licensePlate);
 
-            var model = GetCompanyModel();
-            model.TireCount = tireCount;
-
-            return Json(model);
+            if (car != null)
+            {
+                return Json(car); //Endra til at all dataen på bilen som er registrert blir vist.
+            }
+            else
+            {
+                return Json(new { error = "Bil ikkje funnen i databasen." });
+            }
         }
 
         public IActionResult About()

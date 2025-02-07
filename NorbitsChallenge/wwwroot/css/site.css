@@ -1,15 +1,18 @@
 ﻿/* Please see documentation at https://docs.microsoft.com/aspnet/core/client-side/bundling-and-minification\ 
 for details on configuring this project to bundle and minify static web assets. */
 body {
-    padding-top: 50px;
-    padding-bottom: 20px;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    margin: 0px 90px;
 }
 
 /* Wrapping element */
 /* Set some basic padding to keep content from hitting the edges */
 .body-content {
-    padding-left: 15px;
-    padding-right: 15px;
+    margin-top: 90px;
+    width: 100%;
+    flex: 1;
 }
 
 /* Carousel */
@@ -28,10 +31,54 @@ body {
     margin: 15px;
 }
 
+.navbar .container-fluid {
+    margin: 0px 90px;
+}
+
+.navbar .nav li {
+    padding: 10px 20px;
+}
+
+.navbar .nav a {
+    padding: 5px 10px;
+}
+
+.navbar .nav #add-car {
+    background: #0d6efd;
+    border-color: #0d6efd;
+}
+
+/* Bil info for framsida */
+#carInfoContainer {
+    margin-top: 20px;
+}
+
+#carInfoContainer h3 {
+    margin-top: 10px;
+}
+
+/* Bil detaljer */
+#carDetails {
+    margin-top: 20px;
+}
+
+/* Bil liste tabell */
+#carList tbody tr td {
+    vertical-align: middle;
+}
+
 /* Hide/rearrange for smaller screens */
 @media screen and (max-width: 767px) {
     /* Hide captions */
     .carousel-caption {
         display: none;
+    }
+
+    body {
+        margin: 0px 20px;
+    }
+
+    .navbar .container-fluid {
+        margin: 0px 20px;
     }
 }

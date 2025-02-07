@@ -1,0 +1,48 @@
+﻿@{
+    ViewData["Title"] = "Vis: " + @Model.LicensePlate;
+}
+
+@model NorbitsChallenge.Models.Car
+
+<h2>Bil Detaljer: @Model.LicensePlate</h2>
+
+<div id="carDetails">
+    <table class="table table-bordered table-striped">
+        <tbody>
+            <tr>
+                <th style="width: 30%;">Merke</th>
+                <td>@Model.Brand</td>
+            </tr>
+            <tr>
+                <th>Modell</th>
+                <td>@Model.Model</td>
+            </tr>
+            <tr>
+                <th>Reg. nr.</th>
+                <td>@Model.LicensePlate</td>
+            </tr>
+            <tr>
+                <th>Beskrivelse</th>
+                <td>@(string.IsNullOrEmpty(Model.Description) ? "Ingen beskrivelse tilgjengelig" : Model.Description)</td>
+            </tr>
+            <tr>
+                <th>Dekk</th>
+                <td>@Model.TireCount</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div>
+        <a asp-action="Edit" asp-controller="Car" asp-route-licensePlate="@Model.LicensePlate" class="btn btn-primary">
+            <i class="fas fa-edit"></i> Rediger bil
+        </a>
+
+        <form asp-action="Delete" asp-controller="Car" asp-route-licensePlate="@Model.LicensePlate" method="post" style="display: inline;">
+            <button type="submit" class="btn btn-danger" onclick="return confirm('Er du sikker på at du vil slette denne bilen?');">
+                <i class="fas fa-trash"></i> Slett bil
+            </button>
+        </form>
+    </div>
+</div>
+
+

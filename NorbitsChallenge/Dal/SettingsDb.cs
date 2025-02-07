@@ -20,7 +20,7 @@ namespace NorbitsChallenge.Dal
 
         public string GetCompanyName(int companyId)
         {
-            string companyName = "";
+            string companyName = "Ukjent selskap";
 
             var connectionString = _config.GetSection("ConnectionString").Value;
 
@@ -76,6 +76,19 @@ namespace NorbitsChallenge.Dal
                 }
             }
 
+            if (!settings.Any(s => s.Key == "companyname"))
+            {
+                UpdateSetting(new Setting
+                {
+                    Key = "companyname",
+                    Value = "Ukjent selskap (default)",
+                    CompanyId = companyId
+                }, companyId);
+
+                // Refresh settings list after the insert
+                return GetSettings(companyId);
+            }
+
             return settings;
         }
 
@@ -86,13 +99,44 @@ namespace NorbitsChallenge.Dal
             using (var connection = new SqlConnection(connectionString))
             {
                 connection.Open();
-                using (var command = new SqlCommand {Connection = connection, CommandType = CommandType.Text})
-                {
-                    command.CommandText = $"update settings set settingValue = '{setting.Value}' where setting = '{setting.Key}'";
 
-                    command.ExecuteNonQuery();
+                // First attempt to UPDATE
+                using (var command = new SqlCommand
+                {
+                    Connection = connection,
+                    CommandType = CommandType.Text,
+                    CommandText = "UPDATE Settings SET settingValue = @Value " +
+                                  "WHERE setting = @Key AND companyId = @CompanyId"
+                })
+                {
+                    command.Parameters.AddWithValue("@Value", setting.Value);
+                    command.Parameters.AddWithValue("@Key", setting.Key);
+                    command.Parameters.AddWithValue("@CompanyId", companyId);
+
+                    // Execute the UPDATE
+                    int rowsAffected = command.ExecuteNonQuery();
+
+                    // If UPDATE did nothing, we must INSERT
+                    if (rowsAffected == 0)
+                    {
+                        using (var insertCommand = new SqlCommand
+                        {
+                            Connection = connection,
+                            CommandType = CommandType.Text,
+                            CommandText = "INSERT INTO Settings (setting, settingValue, companyId) " +
+                                          "VALUES (@Key, @Value, @CompanyId)"
+                        })
+                        {
+                            insertCommand.Parameters.AddWithValue("@Key", setting.Key);
+                            insertCommand.Parameters.AddWithValue("@Value", setting.Value);
+                            insertCommand.Parameters.AddWithValue("@CompanyId", companyId);
+
+                            insertCommand.ExecuteNonQuery();
+                        }
+                    }
                 }
             }
         }
+
     }
 }

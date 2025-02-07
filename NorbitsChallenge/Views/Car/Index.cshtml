@@ -1,0 +1,35 @@
+﻿@{
+    ViewData["Title"] = "Liste over bilar";
+}
+
+@model List<NorbitsChallenge.Models.Car>
+
+<h2>Liste over bilar</h2>
+
+<table id="carList" class="table table-striped">
+    <thead>
+        <tr>
+            <th>Reg. nr.</th>
+            <th>Modell</th>
+            <th>Merke</th>
+            <th>Dekk</th>
+            <th>Handling</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var car in Model)
+        {
+            <tr>
+                <td>@car.LicensePlate</td>
+                <td>@car.Model</td>
+                <td>@car.Brand</td>
+                <td>@car.TireCount</td>
+                <td>
+                    <a asp-action="ViewCar" asp-controller="Car" asp-route-licensePlate="@car.LicensePlate" class="btn btn-primary w-100">
+                        Vis bil
+                    </a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

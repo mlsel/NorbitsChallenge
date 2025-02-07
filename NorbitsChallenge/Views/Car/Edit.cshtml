@@ -1,0 +1,38 @@
+﻿@{
+    ViewData["Title"] = "Rediger: " + @Model.LicensePlate;
+}
+
+@model NorbitsChallenge.Models.Car
+
+<h2>Rediger Bil: @Model.LicensePlate</h2>
+
+<form asp-action="Edit" asp-controller="Car" method="post">
+
+    <!-- Setter desse til "hidden" sidan value er alltid CompanyId og LicensePlate er den som skal redigerast -->
+    <input type="hidden" name="LicensePlate" value="@Model.LicensePlate" />
+    <input type="hidden" name="CompanyId" value="@Model.CompanyId" />
+
+    <div class="form-group mb-2">
+        <label for="Brand">Merke</label>
+        <input type="text" id="Brand" name="Brand" class="form-control" value="@Model.Brand" required />
+    </div>
+
+    <div class="form-group mb-2">
+        <label for="Model">Modell</label>
+        <input type="text" id="Model" name="Model" class="form-control" value="@Model.Model" required />
+    </div>
+
+    <div class="form-group mb-2">
+        <label for="Description">Beskrivelse</label>
+        <textarea id="Description" name="Description" class="form-control">@Model.Description</textarea>
+    </div>
+
+    <div class="form-group mb-2">
+        <label for="TireCount">Dekk</label>
+        <input type="number" id="TireCount" name="TireCount" class="form-control" value="@Model.TireCount" required />
+    </div>
+
+    <button type="submit" class="btn btn-success">Lagre endringer</button>
+    <a asp-action="ViewCar" asp-controller="Car" asp-route-licensePlate="@Model.LicensePlate" class="btn btn-secondary">Avbryt</a>
+</form>
+

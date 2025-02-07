@@ -1,36 +1,122 @@
 ﻿@model HomeModel
 
 @{
-
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Heim";
 }
 
+<h2>Vis biler for @Model.CompanyName</h2>
 
-
-<h2>
-    Vis biler for @Model.CompanyName
-</h2>
-<form asp-action="Index" data-ajax="true" data-ajax-method="POST" data-ajax-success="onSuccess">
+<form asp-action="Index" data-ajax="true" data-ajax-method="POST" data-ajax-success="onSuccess" class="form-inline">
     <input type="hidden" name="companyId" value="@Model.CompanyId" />
-    <input type="text" name="licensePlate" />
-    <input type="submit" value="Søk" />
+    <div class="input-group input-group-lg mb-4">
+        <input type="text" name="licensePlate" class="form-control" placeholder="Registreringsnummer">
+            <button type="submit" class="btn btn-primary">
+            <i class="bi bi-search"></i> Søk etter bil
+            </button>
+    </div>
 </form>
 
 
-<div class="hidden" id="tireInfo">
-    <div>Denne bilen har <div id="tireCount" style="display: inline;"></div> dekk på dekkhotell</div>
+
+<!-- Søke resultat (Hidden) -->
+<div id="carInfoContainer" class="visually-hidden">
+    <h3>Søke resultat:</h3>
+    <table class="table table-bordered table-striped">
+        <tbody>
+            <tr>
+                <th style="width: 30%;">Merke</th>
+                <td id="carBrand"></td>
+            </tr>
+            <tr>
+                <th>Modell</th>
+                <td id="carModel"></td>
+            </tr>
+            <tr>
+                <th>Reg. nr.</th>
+                <td id="carLicensePlate"></td>
+            </tr>
+            <tr>
+                <th>Dekk</th>
+                <td id="carTireCount"></td>
+            </tr>
+            <tr>
+                <th>Beskrivelse</th>
+                <td id="carDescription"></td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div style="margin-top: 10px;">
+        <a id="viewCarBtn" class="btn btn-primary hidden">
+            <i class="fas fa-eye"></i> Vis bil
+        </a>
+        <a id="editCarBtn" class="btn btn-secondary hidden">
+            <i class="fas fa-edit"></i> Rediger bil
+        </a>
+    </div>
 </div>
-    
-<hr/>
-<h4>Gå til <a asp-action="Index" asp-controller="Settings" asp-route-companyId="@Model.CompanyId">Innstillinger</a></h4>
+
+<!-- Error Message (Initially Hidden) -->
+<div id="errorMessage" class="visually-hidden text-danger" style="margin-top: 10px;"></div>
+
+
+<hr />
+
+<div class="container-fluid mt-4">
+    <div class="row text-center">
+        <div class="col-md-4">
+            <a asp-action="Index" asp-controller="Settings" asp-route-companyId="@Model.CompanyId" class="text-decoration-none">
+                <div class="card shadow-sm mb-4 mb-md-0 p-2 p-md-4 d-flex flex-row flex-md-column justify-content-center">
+                    <i class="bi bi-gear-fill" style="font-size: 3rem; color: #0d6efd;"></i>
+                    <h5 class="mt-md-3 mb-0 mb-md-2 ms-3 ms-md-0 align-self-center">Innstillinger</h5>
+                </div>
+            </a>
+        </div>
+
+        <div class="col-md-4">
+            <a asp-action="Index" asp-controller="Car" class="text-decoration-none">
+                <div class="card shadow-sm mb-4 mb-md-0 p-2 p-md-4 d-flex flex-row flex-md-column justify-content-center">
+                    <i class="bi bi-car-front-fill" style="font-size: 3rem; color: #0d6efd;"></i>
+                    <h5 class="mt-md-3 mb-0 mb-md-2 ms-3 ms-md-0 align-self-center">Liste over biler</h5>
+                </div>
+            </a>
+        </div>
+
+        <div class="col-md-4">
+            <a asp-action="Create" asp-controller="Car" class="text-decoration-none">
+                <div class="card shadow-sm p-2 p-md-4 d-flex flex-row flex-md-column justify-content-center">
+                    <i class="bi bi-plus-circle-fill" style="font-size: 3rem; color: #198754;"></i>
+                    <h5 class="mt-md-3 mb-0 mb-md-2 ms-3 ms-md-0 align-self-center">Legg til ny bil</h5>
+                </div>
+            </a>
+        </div>
+    </div>
+</div>
 
 @section Scripts
 {
     <script type="text/javascript">
         function onSuccess(data) {
-            var tireCount = data.tireCount;
-            $('#tireCount').text(tireCount);
-            $('#tireInfo').removeClass('hidden');
+            if (data.error) {
+                $('#errorMessage').text(data.error).removeClass('visually-hidden');
+                $('#carInfoContainer').addClass('visually-hidden');
+            } else {
+                $('#carBrand').text(data.brand || "Ukjent merke");
+                $('#carModel').text(data.model || "Ukjent modell");
+                $('#carLicensePlate').text(data.licensePlate);
+                $('#carTireCount').text(data.tireCount);
+                $('#carDescription').text(data.description || "Ingen beskrivelse tilgjengelig");
+
+                $('#viewCarBtn').attr("href", "/Car/" + data.licensePlate);
+                $('#viewCarBtn').removeClass('visually-hidden');
+
+                $('#editCarBtn').attr("href", "/Car/Edit/" + data.licensePlate);
+                $('#editCarBtn').removeClass('visually-hidden');
+
+                $('#carInfoContainer').removeClass('visually-hidden');
+                $('#errorMessage').addClass('visually-hidden');
+            }
         }
     </script>
 }
+
