@@ -85,7 +85,7 @@ namespace NorbitsChallenge.Dal
                     CompanyId = companyId
                 }, companyId);
 
-                // Refresh settings list after the insert
+                // Refresh instillinger
                 return GetSettings(companyId);
             }
 
@@ -100,7 +100,6 @@ namespace NorbitsChallenge.Dal
             {
                 connection.Open();
 
-                // First attempt to UPDATE
                 using (var command = new SqlCommand
                 {
                     Connection = connection,
@@ -113,10 +112,10 @@ namespace NorbitsChallenge.Dal
                     command.Parameters.AddWithValue("@Key", setting.Key);
                     command.Parameters.AddWithValue("@CompanyId", companyId);
 
-                    // Execute the UPDATE
+                    // UPDATE
                     int rowsAffected = command.ExecuteNonQuery();
 
-                    // If UPDATE did nothing, we must INSERT
+                    // INSERT
                     if (rowsAffected == 0)
                     {
                         using (var insertCommand = new SqlCommand
